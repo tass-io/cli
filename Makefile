@@ -5,7 +5,7 @@ BUILD=`date +%FT%T%z`
 GIT_COMMIT=`git rev-parse HEAD`
 
 # The following flags are params in go build
-FILE_PATH=github.com/tass-io/cli/cmd/version
+FILE_PATH=github.com/tass-io/cli/pkg/version
 APP_VERSION_FLAG=${FILE_PATH}.AppVersion=${APP_VERSION}
 SCHEDULE_VERSION_FLAG=${FILE_PATH}.LocalSchedulerVersion=${SCHEDULE_VERSION}
 BUILD_FLAG=${FILE_PATH}.BuildTime=${BUILD}
