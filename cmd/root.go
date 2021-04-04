@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/tass-io/cli/cmd/version"
 )
 
 var rootCmd = &cobra.Command{
@@ -17,5 +16,5 @@ func Execute() error {
 }
 
 func init() {
-	rootCmd.AddCommand(version.VersionCmd)
+	rootCmd.AddCommand(versionCmd)
 }

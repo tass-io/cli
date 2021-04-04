@@ -30,22 +30,15 @@ func (info *VersionInfo) String() string {
 		", Build time: " + info.BuildTime + ", Git commit: " + info.GitCommit + "}"
 }
 
-var VersionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "Version of the Tass.",
-	Long:  "Version information of the Tass.",
-	Run: func(cmd *cobra.Command, args []string) {
-		info := &VersionInfo{
-			AppVersion:            AppVersion,
-			LocalSchedulerVersion: LocalSchedulerVersion,
-			GoVersion:             runtime.Version(),
-			Compiler:              runtime.Compiler,
-			Platform:              runtime.GOOS + "/" + runtime.GOARCH,
-			BuildTime:             BuildTime,
-			GitCommit:             GitCommit,
-		}
-		log.Println(info.String())
-	},
+func GetVersionInfo(cmd *cobra.Command, args []string) {
+	info := &VersionInfo{
+		AppVersion:            AppVersion,
+		LocalSchedulerVersion: LocalSchedulerVersion,
+		GoVersion:             runtime.Version(),
+		Compiler:              runtime.Compiler,
+		Platform:              runtime.GOOS + "/" + runtime.GOARCH,
+		BuildTime:             BuildTime,
+		GitCommit:             GitCommit,
+	}
+	log.Println(info.String())
 }
-
-func init() {}
