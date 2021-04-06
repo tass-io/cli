@@ -15,4 +15,8 @@ var functionCmd = &cobra.Command{
 
 func init() {
 	functionCmd.AddCommand(function.CreateCmd)
+	functionCmd.AddCommand(function.DeleteCmd)
+	functionCmd.AddCommand(function.UpdateCmd)
+	functionCmd.AddCommand(function.GetCmd)
+	functionCmd.AddCommand(function.ListCmd)
 }

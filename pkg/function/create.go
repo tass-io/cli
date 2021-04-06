@@ -13,7 +13,6 @@ import (
 type CreateFunction struct {
 	name   string
 	ns     string
-	domain string
 	code   string
 	client client.Client
 	fn     *serverlessv1alpha1.Function
