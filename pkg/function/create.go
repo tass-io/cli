@@ -4,41 +4,49 @@ import (
 	"context"
 	"errors"
 
-	"github.com/tass-io/cli/pkg/agent"
 	serverlessv1alpha1 "github.com/tass-io/tass-operator/api/v1alpha1"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-func doCreate() error {
-	fn, err := getFn()
+type CreateFunction struct {
+	name   string
+	ns     string
+	domain string
+	code   string
+	client client.Client
+	fn     *serverlessv1alpha1.Function
+}
+
+// do is the business logic of creating a Function
+func (cf *CreateFunction) do() error {
+	err := cf.get()
 	if client.IgnoreNotFound(err) != nil {
 		// Get Function failed
 		return err
 	}
-	if fn.Name == fnName {
+	if cf.name == cf.fn.Name {
 		return errors.New("A function with the same name already exists")
 	}
-	return createFn()
+	return cf.complete()
 }
 
-func getFn() (*serverlessv1alpha1.Function, error) {
-	c := *agent.GetCRDClient()
-	fn := &serverlessv1alpha1.Function{}
-	err := c.Get(context.Background(), client.ObjectKey{
-		Namespace: fnNamespace,
-		Name:      fnName,
-	}, fn)
-	return fn, err
+// get gets the Function by name and namespace
+func (cf *CreateFunction) get() error {
+	err := cf.client.Get(context.Background(), client.ObjectKey{
+		Namespace: cf.ns,
+		Name:      cf.name,
+	}, cf.fn)
+	return err
 }
 
-func createFn() error {
-	c := *agent.GetCRDClient()
-	fn := &serverlessv1alpha1.Function{
+// complete creates a Function, business logic should be done before calling this function
+func (cf *CreateFunction) complete() error {
+	cf.fn = &serverlessv1alpha1.Function{
 		ObjectMeta: metav1.ObjectMeta{
-			Namespace: fnNamespace,
-			Name:      fnName,
+			Namespace: cf.ns,
+			Name:      cf.name,
 		},
 		// FIXME: Update this field later
 		Spec: serverlessv1alpha1.FunctionSpec{
@@ -47,5 +55,5 @@ func createFn() error {
 			Command:     "WHATS HAPPENNING",
 		},
 	}
-	return c.Create(context.Background(), fn)
+	return cf.client.Create(context.Background(), cf.fn)
 }

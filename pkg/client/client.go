@@ -1,4 +1,4 @@
-package agent
+package client
 
 import (
 	"fmt"
@@ -15,10 +15,14 @@ var (
 	c *client.Client
 )
 
+// GetCRDClient returns the CRD client pointer
 func GetCRDClient() *client.Client {
 	return c
 }
 
+// initCRDClient create a client to perform CRUD operations on a Kubernetes cluster.
+// In order to call the recognize CRD types,
+// a scheme that has custom operator types registered for the Client is set.
 func initCRDClient() {
 	scheme := runtime.NewScheme()
 	err := serverlessv1alpha1.AddToScheme(scheme)

@@ -4,12 +4,14 @@ import (
 	"log"
 
 	"github.com/spf13/cobra"
+	cliClient "github.com/tass-io/cli/pkg/client"
+	serverlessv1alpha1 "github.com/tass-io/tass-operator/api/v1alpha1"
 )
 
 var (
 	fnName      string
 	fnNamespace string
-	domain string
+	domain      string
 	code        string
 )
 
@@ -21,7 +23,15 @@ var CreateCmd = &cobra.Command{
 }
 
 func Create(cmd *cobra.Command, args []string) {
-	err := doCreate()
+	cf := &CreateFunction{
+		name:   fnName,
+		ns:     fnNamespace,
+		domain: domain,
+		code:   code,
+		client: *cliClient.GetCRDClient(),
+		fn:     &serverlessv1alpha1.Function{},
+	}
+	err := cf.do()
 	if err != nil {
 		log.Fatalln(err)
 		return
