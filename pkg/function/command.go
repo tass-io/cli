@@ -103,6 +103,7 @@ func Get(cmd *cobra.Command, args []string) {
 		log.Fatalln(err)
 		return
 	}
+	// TODO: Do the print information
 	log.Println("Function" + fnName + " gotten.")
 	fmt.Println(*gf.fn)
 }
@@ -115,10 +116,7 @@ func List(cmd *cobra.Command, args []string) {
 	}
 	if err := lf.do(); err != nil {
 		log.Fatalln(err)
-		return
 	}
-	log.Println("Function list in " + fnNamespace + " namespace gotten.")
-	fmt.Println(*lf.fnList)
 }
 
 func init() {
