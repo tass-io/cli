@@ -3,6 +3,7 @@ package function
 import (
 	"context"
 
+	"github.com/tass-io/cli/pkg/storagesvc"
 	serverlessv1alpha1 "github.com/tass-io/tass-operator/api/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -27,5 +28,13 @@ func (df *DeleteFunction) complete() error {
 			Name:      df.name,
 		},
 	}
+	if err := df.clear(); err != nil {
+		return err
+	}
 	return df.client.Delete(context.Background(), fn)
+}
+
+// clear deletes the code of the function in storage service
+func (df *DeleteFunction) clear() error {
+	return storagesvc.Delete(df.ns, df.name)
 }
