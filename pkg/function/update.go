@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/tass-io/cli/pkg/storagesvc"
 	serverlessv1alpha1 "github.com/tass-io/tass-operator/api/v1alpha1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 
@@ -28,6 +29,9 @@ func (uf *UpdateFunction) do() error {
 		// Get Function failed
 		return err
 	}
+	if err := uf.store(); err != nil {
+		return err
+	}
 	return uf.complete()
 }
 
@@ -38,6 +42,12 @@ func (uf *UpdateFunction) get() error {
 		Name:      uf.name,
 	}, uf.fn)
 	return err
+}
+
+// store stores the source code of the function
+// store covers the old function code, regardless of the old version
+func (uf *UpdateFunction) store() error {
+	return storagesvc.Set(uf.ns, uf.name, uf.code)
 }
 
 // complete updates a Function, business logic should be done before calling this function

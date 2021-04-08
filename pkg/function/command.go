@@ -1,7 +1,6 @@
 package function
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -103,9 +102,6 @@ func Get(cmd *cobra.Command, args []string) {
 		log.Fatalln(err)
 		return
 	}
-	// TODO: Do the print information
-	log.Println("Function" + fnName + " gotten.")
-	fmt.Println(*gf.fn)
 }
 
 func List(cmd *cobra.Command, args []string) {
@@ -123,8 +119,9 @@ func init() {
 	// Create command
 	CreateCmd.Flags().StringVarP(&fnName, "name", "n", "", "Name of function")
 	CreateCmd.Flags().StringVarP(&fnNamespace, "ns", "", "default", "Namespace of the function")
-	CreateCmd.Flags().StringVarP(&code, "code", "c", "", "Namespace of function")
+	CreateCmd.Flags().StringVarP(&code, "code", "c", "", "Location of function code")
 	CreateCmd.MarkFlagRequired("name")
+	CreateCmd.MarkFlagRequired("code")
 	// Delete command
 	DeleteCmd.Flags().StringVarP(&fnName, "name", "n", "", "Name of function")
 	DeleteCmd.Flags().StringVarP(&fnNamespace, "ns", "", "default", "Namespace of the function")
@@ -132,7 +129,9 @@ func init() {
 	// Update command
 	UpdateCmd.Flags().StringVarP(&fnName, "name", "n", "", "Name of function")
 	UpdateCmd.Flags().StringVarP(&fnNamespace, "ns", "", "default", "Namespace of the function")
+	UpdateCmd.Flags().StringVarP(&code, "code", "c", "", "Location of function code")
 	UpdateCmd.MarkFlagRequired("name")
+	UpdateCmd.MarkFlagRequired("code")
 	// Get command
 	GetCmd.Flags().StringVarP(&fnName, "name", "n", "", "Name of function")
 	GetCmd.Flags().StringVarP(&fnNamespace, "ns", "", "default", "Namespace of the function")
