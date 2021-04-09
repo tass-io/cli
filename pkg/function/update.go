@@ -52,7 +52,5 @@ func (uf *UpdateFunction) store() error {
 
 // complete updates a Function, business logic should be done before calling this function
 func (uf *UpdateFunction) complete() error {
-	// FIXME: MOCK a update logic, update this logic later
-	uf.fn.Spec.Domain += "-update"
 	return uf.client.Update(context.Background(), uf.fn)
 }
