@@ -61,9 +61,7 @@ func (cf *CreateFunction) complete() error {
 		},
 		// FIXME: Update this field later
 		Spec: serverlessv1alpha1.FunctionSpec{
-			Domain:      "cli",
 			Environment: "Golang",
-			Command:     "WHATS HAPPENNING",
 		},
 	}
 	return cf.client.Create(context.Background(), cf.fn)
