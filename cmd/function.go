@@ -19,4 +19,5 @@ func init() {
 	functionCmd.AddCommand(function.UpdateCmd)
 	functionCmd.AddCommand(function.GetCmd)
 	functionCmd.AddCommand(function.ListCmd)
+	functionCmd.AddCommand(function.TestCmd)
 }
