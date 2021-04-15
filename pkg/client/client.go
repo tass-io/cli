@@ -1,7 +1,7 @@
 package client
 
 import (
-	"log"
+	"github.com/tass-io/cli/pkg/logging"
 	"os"
 
 	"k8s.io/apimachinery/pkg/runtime"
@@ -12,9 +12,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 )
 
-var (
-	c *client.Client
-)
+var c *client.Client
+var log = logging.Log
 
 // GetCRDClient returns the CRD client pointer
 func GetCRDClient() *client.Client {
@@ -27,16 +26,16 @@ func GetCRDClient() *client.Client {
 func initCRDClient() {
 	scheme := runtime.NewScheme()
 	if err := serverlessv1alpha1.AddToScheme(scheme); err != nil {
-		log.Println(err)
+		log.Error(err)
 		os.Exit(1)
 	}
 	if err := corev1.AddToScheme(scheme); err != nil {
-		log.Println(err)
+		log.Error(err)
 		os.Exit(1)
 	}
 	cl, err := client.New(config.GetConfigOrDie(), client.Options{Scheme: scheme})
 	if err != nil {
-		log.Println("failed to create client")
+		log.Error("failed to create client")
 		os.Exit(1)
 	}
 	c = &cl

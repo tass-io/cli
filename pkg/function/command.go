@@ -1,7 +1,7 @@
 package function
 
 import (
-	"log"
+	"github.com/tass-io/cli/pkg/logging"
 
 	"github.com/spf13/cobra"
 	cliClient "github.com/tass-io/cli/pkg/client"
@@ -16,6 +16,8 @@ var (
 )
 
 var client = *cliClient.GetCRDClient()
+
+var log = logging.Log
 
 var CreateCmd = &cobra.Command{
 	Use:   "create",
@@ -68,10 +70,10 @@ func Create(cmd *cobra.Command, args []string) {
 		fn:   &serverlessv1alpha1.Function{},
 	}
 	if err := cf.do(); err != nil {
-		log.Fatalln(err)
+		log.Error(err)
 		return
 	}
-	log.Println("Function " + fnName + " created.")
+	log.Info("Function " + fnName + " created.")
 }
 
 func Delete(cmd *cobra.Command, args []string) {
@@ -80,10 +82,10 @@ func Delete(cmd *cobra.Command, args []string) {
 		ns:   fnNamespace,
 	}
 	if err := df.do(); err != nil {
-		log.Fatalln(err)
+		log.Error(err)
 		return
 	}
-	log.Println("Function" + fnName + " deleted.")
+	log.Info("Function" + fnName + " deleted.")
 }
 
 func Update(cmd *cobra.Command, args []string) {
@@ -93,10 +95,10 @@ func Update(cmd *cobra.Command, args []string) {
 		fn:   &serverlessv1alpha1.Function{},
 	}
 	if err := uf.do(); err != nil {
-		log.Fatalln(err)
+		log.Error(err)
 		return
 	}
-	log.Println("Function" + fnName + " updated.")
+	log.Info("Function" + fnName + " updated.")
 }
 
 func Get(cmd *cobra.Command, args []string) {
@@ -106,7 +108,7 @@ func Get(cmd *cobra.Command, args []string) {
 		fn:   &serverlessv1alpha1.Function{},
 	}
 	if err := gf.do(); err != nil {
-		log.Fatalln(err)
+		log.Error(err)
 		return
 	}
 }
@@ -117,7 +119,7 @@ func List(cmd *cobra.Command, args []string) {
 		fnList: &serverlessv1alpha1.FunctionList{},
 	}
 	if err := lf.do(); err != nil {
-		log.Fatalln(err)
+		log.Error(err)
 	}
 }
 
@@ -129,7 +131,7 @@ func Test(cmd *cobra.Command, args []string) {
 		svc:  &corev1.Service{},
 	}
 	if err := tf.do(); err != nil {
-		log.Fatalln(err)
+		log.Error(err)
 	}
 }
 
