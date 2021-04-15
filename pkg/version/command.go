@@ -1,7 +1,7 @@
 package version
 
 import (
-	"log"
+	"fmt"
 	"runtime"
 
 	"github.com/spf13/cobra"
@@ -40,5 +40,5 @@ func GetVersionInfo(cmd *cobra.Command, args []string) {
 		BuildTime:             BuildTime,
 		GitCommit:             GitCommit,
 	}
-	log.Println(info.String())
+	fmt.Println(info.String())
 }

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"time"
 
 	"net/http"
@@ -37,7 +36,7 @@ func (tf *TestFunction) do() error {
 	}
 	// 2. Test the health of the Pod with 120 second timeout
 	if err := tf.checkPodStatus(120); err != nil {
-		log.Fatalln("The Pod is not ready.")
+		log.Error("The Pod is not ready.")
 		return err
 	}
 	// 3. Do the test (TODO: Start the image and run the function)
@@ -63,15 +62,15 @@ func (tf *TestFunction) create() error {
 	svc := createSvcConf(labels, tf.name, tf.ns)
 	pod := createPoConf(labels, tf.name, tf.ns)
 
-	log.Println("Creating a test Service...")
+	log.Info("Creating a test Service...")
 	if err := client.Create(context.Background(), svc); err != nil {
-		log.Fatalln("Create Service failed")
+		log.Error("Create Service failed")
 		return err
 	}
 
-	log.Println("Creating a test Pod...")
+	log.Info("Creating a test Pod...")
 	if err := client.Create(context.Background(), pod); err != nil {
-		log.Fatalln("Create Pod failed")
+		log.Error("Create Pod failed")
 		return err
 	}
 	return nil
@@ -90,10 +89,10 @@ func createSvcConf(labels map[string]string, name, ns string) *corev1.Service {
 // checkPodStatus waits for the pod status being ready until timeout(second)
 func (tf *TestFunction) checkPodStatus(timeout int) error {
 	for i := 0; i < timeout; i += 5 {
-		log.Println("Waiting for Pod creation...")
+		log.Info("Waiting for Pod creation...")
 		isReady := isPodReady(tf.name, tf.ns)
 		if isReady {
-			log.Println("The Pod is ready.")
+			log.Info("The Pod is ready.")
 			return nil
 		}
 		time.Sleep(time.Second * 5)
@@ -122,11 +121,11 @@ func (tf *TestFunction) request() error {
 		targetPort = servicePort.TargetPort.String()
 	}
 
-	log.Println("Test the Function.")
+	log.Info("Test the Function.")
 
 	// Send http request
 	// TODO: This is a test address
-	log.Println("The Function response is:")
+	log.Info("The Function response is:")
 	address := "http://" + ip + ":" + targetPort + "/get"
 	resp, err := http.Get(address)
 	if err != nil {
@@ -151,7 +150,7 @@ func (tf *TestFunction) getSvc() error {
 // clean deletes the test resource of Service and Pod
 // If the clean action founds the resource not found, it will ignore the error
 func (tf *TestFunction) clean() error {
-	log.Println("Clean the test resource...")
+	log.Info("Clean the test resource...")
 	po := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: tf.ns,
