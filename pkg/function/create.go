@@ -8,15 +8,14 @@ import (
 	serverlessv1alpha1 "github.com/tass-io/tass-operator/api/v1alpha1"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"sigs.k8s.io/controller-runtime/pkg/client"
+	runtimeClient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 type CreateFunction struct {
-	name   string
-	ns     string
-	code   string
-	client client.Client
-	fn     *serverlessv1alpha1.Function
+	name string
+	ns   string
+	code string
+	fn   *serverlessv1alpha1.Function
 }
 
 // do is the business logic of creating a Function
@@ -24,7 +23,7 @@ type CreateFunction struct {
 // The commit point is the CRD Creation
 func (cf *CreateFunction) do() error {
 	err := cf.get()
-	if client.IgnoreNotFound(err) != nil {
+	if runtimeClient.IgnoreNotFound(err) != nil {
 		// Get Function failed
 		return err
 	}
@@ -40,7 +39,7 @@ func (cf *CreateFunction) do() error {
 
 // get gets the Function by name and namespace
 func (cf *CreateFunction) get() error {
-	err := cf.client.Get(context.Background(), client.ObjectKey{
+	err := client.Get(context.Background(), runtimeClient.ObjectKey{
 		Namespace: cf.ns,
 		Name:      cf.name,
 	}, cf.fn)
@@ -64,5 +63,5 @@ func (cf *CreateFunction) complete() error {
 			Environment: "Golang",
 		},
 	}
-	return cf.client.Create(context.Background(), cf.fn)
+	return client.Create(context.Background(), cf.fn)
 }

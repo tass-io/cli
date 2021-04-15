@@ -6,13 +6,11 @@ import (
 	"github.com/tass-io/cli/pkg/storagesvc"
 	serverlessv1alpha1 "github.com/tass-io/tass-operator/api/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 type DeleteFunction struct {
-	name   string
-	ns     string
-	client client.Client
+	name string
+	ns   string
 }
 
 // do is the business logic of deleting a Function
@@ -31,7 +29,7 @@ func (df *DeleteFunction) complete() error {
 	if err := df.clear(); err != nil {
 		return err
 	}
-	return df.client.Delete(context.Background(), fn)
+	return client.Delete(context.Background(), fn)
 }
 
 // clear deletes the code of the function in storage service

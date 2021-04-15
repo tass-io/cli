@@ -8,15 +8,14 @@ import (
 	serverlessv1alpha1 "github.com/tass-io/tass-operator/api/v1alpha1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 
-	"sigs.k8s.io/controller-runtime/pkg/client"
+	runtimeClient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 type UpdateFunction struct {
-	name   string
-	ns     string
-	code   string
-	client client.Client
-	fn     *serverlessv1alpha1.Function
+	name string
+	ns   string
+	code string
+	fn   *serverlessv1alpha1.Function
 }
 
 // do is the business logic of updating a Function
@@ -25,7 +24,7 @@ func (uf *UpdateFunction) do() error {
 	if k8serrors.IsNotFound(err) {
 		return errors.New("A function with the name not existed")
 	}
-	if client.IgnoreNotFound(err) != nil {
+	if runtimeClient.IgnoreNotFound(err) != nil {
 		// Get Function failed
 		return err
 	}
@@ -37,7 +36,7 @@ func (uf *UpdateFunction) do() error {
 
 // get gets the Function by name and namespace
 func (uf *UpdateFunction) get() error {
-	err := uf.client.Get(context.Background(), client.ObjectKey{
+	err := client.Get(context.Background(), runtimeClient.ObjectKey{
 		Namespace: uf.ns,
 		Name:      uf.name,
 	}, uf.fn)
@@ -52,5 +51,5 @@ func (uf *UpdateFunction) store() error {
 
 // complete updates a Function, business logic should be done before calling this function
 func (uf *UpdateFunction) complete() error {
-	return uf.client.Update(context.Background(), uf.fn)
+	return client.Update(context.Background(), uf.fn)
 }
