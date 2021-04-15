@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	cliClient "github.com/tass-io/cli/pkg/client"
 	serverlessv1alpha1 "github.com/tass-io/tass-operator/api/v1alpha1"
+	corev1 "k8s.io/api/core/v1"
 )
 
 var (
@@ -13,6 +14,8 @@ var (
 	fnNamespace string
 	code        string
 )
+
+var client = *cliClient.GetCRDClient()
 
 var CreateCmd = &cobra.Command{
 	Use:   "create",
@@ -22,10 +25,11 @@ var CreateCmd = &cobra.Command{
 }
 
 var DeleteCmd = &cobra.Command{
-	Use:   "delete",
-	Short: "Delete a function",
-	Long:  "Delete a function",
-	Run:   Delete,
+	Use:     "delete",
+	Aliases: []string{"del", "remove", "rm"},
+	Short:   "Delete a function",
+	Long:    "Delete a function",
+	Run:     Delete,
 }
 
 var UpdateCmd = &cobra.Command{
@@ -49,13 +53,19 @@ var ListCmd = &cobra.Command{
 	Run:   List,
 }
 
+var TestCmd = &cobra.Command{
+	Use:   "test",
+	Short: "Test a function",
+	Long:  "Test a function",
+	Run:   Test,
+}
+
 func Create(cmd *cobra.Command, args []string) {
 	cf := &CreateFunction{
-		name:   fnName,
-		ns:     fnNamespace,
-		code:   code,
-		client: *cliClient.GetCRDClient(),
-		fn:     &serverlessv1alpha1.Function{},
+		name: fnName,
+		ns:   fnNamespace,
+		code: code,
+		fn:   &serverlessv1alpha1.Function{},
 	}
 	if err := cf.do(); err != nil {
 		log.Fatalln(err)
@@ -66,9 +76,8 @@ func Create(cmd *cobra.Command, args []string) {
 
 func Delete(cmd *cobra.Command, args []string) {
 	df := &DeleteFunction{
-		name:   fnName,
-		ns:     fnNamespace,
-		client: *cliClient.GetCRDClient(),
+		name: fnName,
+		ns:   fnNamespace,
 	}
 	if err := df.do(); err != nil {
 		log.Fatalln(err)
@@ -79,10 +88,9 @@ func Delete(cmd *cobra.Command, args []string) {
 
 func Update(cmd *cobra.Command, args []string) {
 	uf := &UpdateFunction{
-		name:   fnName,
-		ns:     fnNamespace,
-		client: *cliClient.GetCRDClient(),
-		fn:     &serverlessv1alpha1.Function{},
+		name: fnName,
+		ns:   fnNamespace,
+		fn:   &serverlessv1alpha1.Function{},
 	}
 	if err := uf.do(); err != nil {
 		log.Fatalln(err)
@@ -93,10 +101,9 @@ func Update(cmd *cobra.Command, args []string) {
 
 func Get(cmd *cobra.Command, args []string) {
 	gf := &GetFunction{
-		name:   fnName,
-		ns:     fnNamespace,
-		client: *cliClient.GetCRDClient(),
-		fn:     &serverlessv1alpha1.Function{},
+		name: fnName,
+		ns:   fnNamespace,
+		fn:   &serverlessv1alpha1.Function{},
 	}
 	if err := gf.do(); err != nil {
 		log.Fatalln(err)
@@ -107,7 +114,6 @@ func Get(cmd *cobra.Command, args []string) {
 func List(cmd *cobra.Command, args []string) {
 	lf := &ListFunctions{
 		ns:     fnNamespace,
-		client: *cliClient.GetCRDClient(),
 		fnList: &serverlessv1alpha1.FunctionList{},
 	}
 	if err := lf.do(); err != nil {
@@ -115,27 +121,43 @@ func List(cmd *cobra.Command, args []string) {
 	}
 }
 
+func Test(cmd *cobra.Command, args []string) {
+	tf := &TestFunction{
+		name: fnName,
+		ns:   fnNamespace,
+		fn:   &serverlessv1alpha1.Function{},
+		svc:  &corev1.Service{},
+	}
+	if err := tf.do(); err != nil {
+		log.Fatalln(err)
+	}
+}
+
 func init() {
 	// Create command
-	CreateCmd.Flags().StringVarP(&fnName, "name", "n", "", "Name of function")
+	CreateCmd.Flags().StringVarP(&fnName, "name", "n", "", "Name of the function")
 	CreateCmd.Flags().StringVarP(&fnNamespace, "ns", "", "default", "Namespace of the function")
 	CreateCmd.Flags().StringVarP(&code, "code", "c", "", "Location of function code")
 	CreateCmd.MarkFlagRequired("name")
 	CreateCmd.MarkFlagRequired("code")
 	// Delete command
-	DeleteCmd.Flags().StringVarP(&fnName, "name", "n", "", "Name of function")
+	DeleteCmd.Flags().StringVarP(&fnName, "name", "n", "", "Name of the function")
 	DeleteCmd.Flags().StringVarP(&fnNamespace, "ns", "", "default", "Namespace of the function")
 	DeleteCmd.MarkFlagRequired("name")
 	// Update command
-	UpdateCmd.Flags().StringVarP(&fnName, "name", "n", "", "Name of function")
+	UpdateCmd.Flags().StringVarP(&fnName, "name", "n", "", "Name of the function")
 	UpdateCmd.Flags().StringVarP(&fnNamespace, "ns", "", "default", "Namespace of the function")
 	UpdateCmd.Flags().StringVarP(&code, "code", "c", "", "Location of function code")
 	UpdateCmd.MarkFlagRequired("name")
 	UpdateCmd.MarkFlagRequired("code")
 	// Get command
-	GetCmd.Flags().StringVarP(&fnName, "name", "n", "", "Name of function")
+	GetCmd.Flags().StringVarP(&fnName, "name", "n", "", "Name of the function")
 	GetCmd.Flags().StringVarP(&fnNamespace, "ns", "", "default", "Namespace of the function")
 	GetCmd.MarkFlagRequired("name")
 	// list command
 	ListCmd.Flags().StringVarP(&fnNamespace, "ns", "", "default", "Namespace of the function")
+	// Test command
+	TestCmd.Flags().StringVarP(&fnName, "name", "n", "", "Name of the function")
+	TestCmd.Flags().StringVarP(&fnNamespace, "ns", "", "default", "Namespace of the function")
+	TestCmd.MarkFlagRequired("name")
 }
