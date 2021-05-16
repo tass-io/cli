@@ -9,6 +9,7 @@ import (
 var DefaultAnno map[string]string
 
 func initDefaultAnnotation() {
+	DefaultAnno = make(map[string]string)
 	DefaultAnno["nginx.ingress.kubernetes.io/rewrite-target"] = "/"
 }
 
