@@ -13,6 +13,7 @@ var (
 	fnName      string
 	fnNamespace string
 	code        string
+	mockMode    bool
 )
 
 var client = *cliClient.GetCRDClient()
@@ -68,6 +69,7 @@ func Create(cmd *cobra.Command, args []string) {
 		ns:   fnNamespace,
 		code: code,
 		fn:   &serverlessv1alpha1.Function{},
+		mock: mockMode,
 	}
 	if err := cf.do(); err != nil {
 		log.Error(err)
@@ -140,8 +142,8 @@ func init() {
 	CreateCmd.Flags().StringVarP(&fnName, "name", "n", "", "Name of the function")
 	CreateCmd.Flags().StringVarP(&fnNamespace, "ns", "", "default", "Namespace of the function")
 	CreateCmd.Flags().StringVarP(&code, "code", "c", "", "Location of function code")
+	CreateCmd.Flags().BoolVarP(&mockMode, "mock", "m", false, "Whether use mock mode")
 	CreateCmd.MarkFlagRequired("name")
-	CreateCmd.MarkFlagRequired("code")
 	// Delete command
 	DeleteCmd.Flags().StringVarP(&fnName, "name", "n", "", "Name of the function")
 	DeleteCmd.Flags().StringVarP(&fnNamespace, "ns", "", "default", "Namespace of the function")
