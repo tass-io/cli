@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	address   string = "100.92.53.83:6379"
+	address   string = "10.0.2.79:6379"
 	password  string = ""
 	defaultDb int    = 0
 )
