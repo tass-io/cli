@@ -12,6 +12,7 @@ BUILD_FLAG=${FILE_PATH}.BuildTime=${BUILD}
 GIT_COMMIT_FLAG=${FILE_PATH}.GitCommit=${GIT_COMMIT}
 FLAGS="-X ${APP_VERSION_FLAG} -X ${SCHEDULE_VERSION_FLAG} -X ${BUILD_FLAG} -X ${GIT_COMMIT_FLAG}"
 
+# EDIT: Path sample of tass local scheduler
 SCHEDULER_PATH=/root/tass-io/scheduler
 
 build: fmt vet
