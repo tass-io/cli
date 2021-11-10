@@ -60,7 +60,7 @@ func (cf *CreateFunction) store() error {
 
 // mockStore stores a prepared zipped code of the function
 func (cf *CreateFunction) mockStore() error {
-	fileName := "mock/plugin-golang-wrapper.zip"
+	fileName := "mock/plugin.zip"
 	mockedCode, err := base64.EncodeUserCode(fileName)
 	if err != nil {
 		return err
