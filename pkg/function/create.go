@@ -3,6 +3,7 @@ package function
 import (
 	"context"
 	"errors"
+	"io/ioutil"
 
 	"github.com/tass-io/cli/pkg/storagesvc"
 	serverlessv1alpha1 "github.com/tass-io/tass-operator/api/v1alpha1"
@@ -10,8 +11,6 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtimeClient "sigs.k8s.io/controller-runtime/pkg/client"
-
-	"github.com/tass-io/cli/pkg/tools/base64"
 )
 
 type CreateFunction struct {
@@ -60,12 +59,12 @@ func (cf *CreateFunction) store() error {
 
 // mockStore stores a prepared zipped code of the function
 func (cf *CreateFunction) mockStore() error {
-	fileName := "mock/plugin.zip"
-	mockedCode, err := base64.EncodeUserCode(fileName)
+	fileName := "mock/plugin.so"
+	plugin, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		return err
 	}
-	return storagesvc.CodeSet(cf.ns, cf.name, mockedCode)
+	return storagesvc.CodeSet(cf.ns, cf.name, string(plugin))
 }
 
 // complete creates a Function, business logic should be done before calling this function
